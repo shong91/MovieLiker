@@ -34,7 +34,7 @@ class Review(models.Model):
                               related_name='reviews',
                               on_delete=models.CASCADE)
     author = models.ForeignKey(User,
-                               related_name='comments',
+                               related_name='reviews',
                                on_delete=models.CASCADE)
     review = models.CharField(max_length=10)
     comment = models.CharField(max_length=100)
