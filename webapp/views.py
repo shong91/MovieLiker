@@ -7,5 +7,6 @@ def main(request):
 
 
 def get_movie_list(request):
-    movie_list = MovieViewSet.queryset
-    return render(request, 'movie_list.html', {'list': movie_list})
+    if request.method == 'GET':
+        movie_list = MovieViewSet.queryset
+        return render(request, 'movie_list.html', {'list': movie_list})

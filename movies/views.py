@@ -10,6 +10,12 @@ class MovieViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = MovieSerializer
     permission_classes = [permissions.AllowAny]
 
+    # def retrieve(self, request, *args, **kwargs):
+    #     return Response({'something': 'my custom JSON'})
+    #
+    # def list(self, request, *args, **kwargs):
+    #     return Response({'something': 'my custom JSON'})
+
 
 class AdminMovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.all()
