@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    {% for movie in list %}
+        {{ movie.title }}
+        {{ movie.content }}
+        {{ movie.director }}
+        {{ movie.actor.name }}
+        <p></p>
+    {% endfor %}
+{% endblock %}
