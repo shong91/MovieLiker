@@ -21,8 +21,13 @@ class MovieSerializer(serializers.ModelSerializer):
         return Movie.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
+        instance.title = validated_data.get('title'. instance.title)
         instance.content = validated_data.get('content'. instance.content)
+        instance.director = validated_data.get('director'. instance.director)
+        instance.actor = validated_data.get('actor'. instance.actor)
+        instance.genre = validated_data.get('genre'. instance.genre)
         instance.review = validated_data.get('review', instance.review)
+        instance.released_at = validated_data.get('released_at', instance.released_at)
         instance.save()
         return instance
 
@@ -37,7 +42,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         return Review.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.comment = validated_data.get('comment'. instance.content)
+        instance.movie = validated_data.get('movie'.instance.movie)
         instance.review = validated_data.get('review', instance.review)
+        instance.comment = validated_data.get('comment'. instance.content)
         instance.save()
         return instance

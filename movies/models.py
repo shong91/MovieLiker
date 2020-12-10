@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class Actor(models.Model):
     name = models.CharField(max_length=100)
-    filmography = models.CharField(max_length=100)
+    filmography = models.CharField(max_length=100, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -14,14 +14,14 @@ class Actor(models.Model):
 
 class Movie(models.Model):
     title = models.CharField(max_length=200)
-    content = models.TextField()
-    director = models.CharField(max_length=100)
+    content = models.TextField(null=True)
+    director = models.CharField(max_length=100, null=True)
     actor = models.ForeignKey(Actor,
                               on_delete=models.CASCADE,
                               null=True)
     genre = models.CharField(max_length=100)
-    review = models.CharField(max_length=10)
-    released_at = models.DateTimeField()
+    review = models.CharField(max_length=10, null=True) # foreign key review
+    released_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

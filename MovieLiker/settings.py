@@ -38,8 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'movies',
-    'webapp',
+    'movies.apps.MoviesConfig',
 ]
 
 REST_FRAMEWORK = {
