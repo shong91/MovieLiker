@@ -3,7 +3,6 @@ from rest_framework import viewsets, permissions, renderers
 from rest_framework.response import Response
 from .models import Movie, Review, Actor
 from .serializer import MovieSerializer, ReviewSerializer
-# 데이터 다 지우고 다시하기 - User 부터
 
 
 class MovieViewSet(viewsets.ModelViewSet):
