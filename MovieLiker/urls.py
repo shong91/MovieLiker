@@ -23,3 +23,6 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
 
 ]
+
+# accounts/ : User CRUD
+# api-auth/ : User Login

@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from .serializers import UserSerializer, GroupSerializer
+from .serializers import UserSerializer, UserLoginSerializer, GroupSerializer
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from django.contrib.auth.models import Group
 from .models import User
 
@@ -66,3 +67,22 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+# how to allow POST method?
+class UserLoginViewSet(viewsets.ModelViewSet):
+    serializer_class = UserLoginSerializer
+
+    def login(self, request):
+        serializer = UserLoginSerializer(data=request.data)
+        if not serializer.is_valid(raise_exception=True):
+            return Response({'message': 'Request Body Error. '},
+                            status=status.HTTP_409_CONFLICT)
+        if serializer.validated_data['email'] == 'None':
+            return Response({'message': 'ID or password is incorrect. '}, status=status.HTTP_200_OK)
+        response = {
+            'message': 'Login success! ',
+            'token': 'token'
+        }
+        return Response(response, status=status.HTTP_200_OK)
+        # https://gutsytechster.wordpress.com/2019/11/12/user-auth-operations-in-drf-login-logout-register-change-password/
