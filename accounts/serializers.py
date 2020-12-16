@@ -14,14 +14,15 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 User = get_user_model()
 
 
-class UserLoginSerializer(serializers.Serializer):
+class UserLoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email', 'password'] # 'token'
 
     def validate(self, attrs):
-        email = attrs.get('email', None)
-        password = attrs.get('password', None)
+        email = attrs.get('email')
+        password = attrs.get('password')
+        print(email , ':', password)
         user = authenticate(email=email, password=password)
 
         if user is None:
@@ -32,6 +33,7 @@ class UserLoginSerializer(serializers.Serializer):
         except User.DoesNotExist:
             raise serializers.ValidationError('User with given email and password does not exists')
         return {
+                'user': user,
                 'email': user.email,
                 # 'token': jwt_token
             }

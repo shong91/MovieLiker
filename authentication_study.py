@@ -61,7 +61,7 @@ class MyAPIView(APIView):
     def get (self, request, format=None):
         content = {
             'user': unicode(request.user),
-            'auth': unicode(request. auth),
+            'auth': unicode(request.auth),
         }
         return Response(content)
 

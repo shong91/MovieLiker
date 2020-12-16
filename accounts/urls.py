@@ -3,9 +3,10 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register('', views.UserViewSet, basename='user')
-router.register('login/', views.UserLoginViewSet, basename='login')
+router.register('user', views.UserViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('login/', views.UserLoginView.as_view()),
+
 ]
