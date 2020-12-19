@@ -8,38 +8,12 @@ from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib.auth.models import update_last_login
 from .models import User
-
+from .send_email import send_email
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsOwnerOrReadOnly]
-
-    def list(self, request): # get all list
-        print('request.user: ', request.user)
-        print('request.auth: ', request.auth)
-        queryset = self.queryset.filter()
-        serializer = self.serializer_class(queryset, many=True)
-        return Response({'message': 'Successfully get List', 'data': serializer.data}, status=status.HTTP_200_OK, )
-
-    def perform_destroy(self, instance):
-        user = User.objects.filter(username=instance)
-        user.delete()
-
-    # def update(self, request, pk):  # PUT: 전체 업데이트 시
-    # def partial_update(self, request, pk):  # PATCH: 일부 업데이트 시
-
-    def perform_update(self, serializer):
-        print('==================================')
-        # UserSerializer( < User: test1 >, context = {'request': < rest_framework.request.Request: PUT
-        # '/accounts/1/' >, 'format': None, 'view': < accounts.views.UserViewSet
-        # object >}, data = {
-
-        print('perform_update: ', self.request.user)
-        print('perform_update: ', self.request.auth)
-        user = serializer.save(user=self.request.user)
-        user.set_password(serializer.validated_data['password'])
-        user.save()
+    permission_classes = (IsOwnerOrReadOnly, )
 
     def perform_create(self, serializer):
         username = serializer.validated_data['username']
@@ -51,7 +25,31 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             user = User.objects.create_user(**serializer.validated_data)
             token = Token.objects.create(user=user)
-        print(token)
+
+    def list(self, request): # get all list
+        print('request.user: ', request.user)
+        print('request.auth: ', request.auth)
+        queryset = self.queryset.filter()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response({'message': 'Successfully get List', 'data': serializer.data}, status=status.HTTP_200_OK, )
+
+    # def update(self, request, pk):  # PUT: 전체 업데이트 시
+    # def partial_update(self, request, pk):  # PATCH: 일부 업데이트 시
+    def perform_update(self, serializer):
+        print('==================================')
+        # UserSerializer( < User: test1 >, context = {'request': < rest_framework.request.Request: PUT
+        # '/accounts/1/' >, 'format': None, 'view': < accounts.views.UserViewSet
+        # object >}, data = {
+
+        print('perform_update.user: ', self.request.user)
+        print('perform_update.auth: ', self.request.auth)
+        user = serializer.save(user=self.request.user)
+        user.set_password(serializer.validated_data['password'])
+        user.save()
+
+    def perform_destroy(self, instance):
+        user = User.objects.filter(username=instance)
+        user.delete()
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -98,3 +96,9 @@ class UserLoginView(generics.ListCreateAPIView): #views.APIView
     #         'token': 'token'
     #     }
     #     return Response(response, status=status.HTTP_200_OK)
+
+
+class UserEmailSendView(views.APIView):
+    # celery로 작업하고 싶은 작업은 delay()를 붙여줘야 합니다.
+    send_email.delay()
+    permission_classes = (permissions.AllowAny, )
