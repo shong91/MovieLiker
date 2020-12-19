@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .serializers import UserSerializer, UserLoginSerializer, GroupSerializer
 from rest_framework import viewsets, permissions, status, views, generics
+from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model, authenticate, login
@@ -11,9 +12,11 @@ from .models import User
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def list(self, request): # get all list
+        print('request.user: ', request.user)
+        print('request.auth: ', request.auth)
         queryset = self.queryset.filter()
         serializer = self.serializer_class(queryset, many=True)
         return Response({'message': 'Successfully get List', 'data': serializer.data}, status=status.HTTP_200_OK, )
@@ -25,6 +28,7 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(user, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             user.username = serializer.validated_data['username']
+            # user.email = serializer.validated_data['email'] # pk는 수정하지 않음
             user.set_password(serializer.validated_data['password'])
             user.save()
             return Response({'message': 'User information is successfully updated. '},
@@ -57,11 +61,15 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         username = serializer.validated_data['username']
+
         # 중복 검증 여기서 안해줘도 자동으로 처리됨: {"email":["user with this email_id already exists."]}
         if username == 'admin':
-            User.objects.create_superuser(**serializer.validated_data)  # email, password, **serializer.validated_data
+            user = User.objects.create_superuser(**serializer.validated_data)  # email, password, **serializer.validated_data
+            token = Token.objects.create(user=user)
         else:
-            User.objects.create_user(**serializer.validated_data)
+            user = User.objects.create_user(**serializer.validated_data)
+            token = Token.objects.create(user=user)
+        print(token)
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -84,7 +92,8 @@ class UserLoginView(generics.ListCreateAPIView): #views.APIView
             if user.is_active:
                 update_last_login(None, user)
                 login(request, user)
-                return Response({'message': 'Login success!', 'token': 'token'}, status=status.HTTP_200_OK)
+                token = Token.objects.get(user=user)
+                return Response({'message': 'Login success!', 'token': token.key}, status=status.HTTP_200_OK)
             else:
                 return Response({'message': 'This account has not activated yet. '}, status=status.HTTP_404_NOT_FOUND)
         else:

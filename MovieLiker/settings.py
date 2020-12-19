@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'movies.apps.MoviesConfig',
     'accounts.apps.AccountsConfig',
 ]
@@ -50,10 +51,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
         # 'rest_framework.permissions.IsAuthenticated',
     ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-           'rest_framework.authentication.SessionAuthentication',
-           'rest_framework.authentication.TokenAuthentication',
-    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
     # 'DEFAULT_AUTHENTICATION_CLASSES': [
     #     'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     #     'rest_framework.authentication.SessionAuthentication',
