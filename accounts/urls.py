@@ -9,7 +9,7 @@ router.register('user', account_views.UserViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('login/', account_views.UserLoginView.as_view()),
-    path('email/', account_views.UserEmailSendView.as_view())
+    path('email/', account_views.send_test_email)
     # path('api-token-auth/', views.obtain_auth_token),
 
 ]

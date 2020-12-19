@@ -8,7 +8,9 @@ from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib.auth.models import update_last_login
 from .models import User
-from .send_email import send_email
+from .task import send_email
+from rest_framework.decorators import api_view, permission_classes
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -98,7 +100,16 @@ class UserLoginView(generics.ListCreateAPIView): #views.APIView
     #     return Response(response, status=status.HTTP_200_OK)
 
 
-class UserEmailSendView(views.APIView):
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def send_test_email(request):
     # celery로 작업하고 싶은 작업은 delay()를 붙여줘야 합니다.
     send_email.delay()
-    permission_classes = (permissions.AllowAny, )
+    return Response({'message': 'ok'})
+
+# 왜 FBV에서는 url call 할 때 정상적으로 호출되는데 CBV에서는 서버가 reload 될 때마다 send_email.delay()가 실행되는건지?
+# class UserEmailView(generics.ListAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+#     permission_classes = [permissions.AllowAny]
+#     send_email.delay()
