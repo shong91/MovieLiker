@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .serializers import UserSerializer, UserLoginSerializer, GroupSerializer
-from rest_framework import viewsets, permissions, status, views, generics
+from MovieLiker.permissions import IsOwnerOrReadOnly
+from rest_framework import viewsets, status, views, generics, permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib.auth.models import Group
@@ -12,7 +13,7 @@ from .models import User
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnly]
 
     def list(self, request): # get all list
         print('request.user: ', request.user)
@@ -21,43 +22,24 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(queryset, many=True)
         return Response({'message': 'Successfully get List', 'data': serializer.data}, status=status.HTTP_200_OK, )
 
-    def update(self, request, pk):  # PUT: 전체 업데이트 시
-        print(request)          # <rest_framework.request.Request: PATCH '/accounts/1/'>
-        print(request.data)     # {'email': 'test1@gmail.com', 'password': 'test1'}
-        user = self.queryset.get(pk=pk)
-        serializer = self.serializer_class(user, data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            user.username = serializer.validated_data['username']
-            # user.email = serializer.validated_data['email'] # pk는 수정하지 않음
-            user.set_password(serializer.validated_data['password'])
-            user.save()
-            return Response({'message': 'User information is successfully updated. '},
-                            status=status.HTTP_200_OK)
-        return Response({'message': 'error'}, status=status.HTTP_409_CONFLICT)
-
-    def partial_update(self, request, pk):  # PATCH: 일부 업데이트 시
-        user = self.queryset.get(pk=pk)
-        serializer = self.serializer_class(user, data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            user.set_password(serializer.validated_data['password'])
-            user.save()
-            return Response({'message': 'User information is successfully updated. '},
-                            status=status.HTTP_200_OK)
-        return Response({'message': 'error'}, status=status.HTTP_409_CONFLICT)
-
     def perform_destroy(self, instance):
         user = User.objects.filter(username=instance)
         user.delete()
 
-    # def perform_update(self, serializer):
-    #     print('==================================')
-    #     # UserSerializer( < User: test1 >, context = {'request': < rest_framework.request.Request: PUT
-    #     # '/accounts/1/' >, 'format': None, 'view': < accounts.views.UserViewSet
-    #     # object >}, data = {
-    #
-    #     print(self.request.user) # 왜 AnonymousUser ?
-    #     user = serializer.save(id=self.request.user)
-    #     user.save()
+    # def update(self, request, pk):  # PUT: 전체 업데이트 시
+    # def partial_update(self, request, pk):  # PATCH: 일부 업데이트 시
+
+    def perform_update(self, serializer):
+        print('==================================')
+        # UserSerializer( < User: test1 >, context = {'request': < rest_framework.request.Request: PUT
+        # '/accounts/1/' >, 'format': None, 'view': < accounts.views.UserViewSet
+        # object >}, data = {
+
+        print('perform_update: ', self.request.user)
+        print('perform_update: ', self.request.auth)
+        user = serializer.save(user=self.request.user)
+        user.set_password(serializer.validated_data['password'])
+        user.save()
 
     def perform_create(self, serializer):
         username = serializer.validated_data['username']
