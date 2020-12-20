@@ -15,3 +15,16 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             return False
         else:
             return False
+
+
+class IsAdminOrReadOnly(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_authenticated:
+            if request.method in permissions.SAFE_METHODS:  # SAFE_METHODS 는 db 를 수정하지 않는 GET, HEAD, OPTIONS 등.
+                return True
+            elif request.user.is_staff:
+                return True
+            else:
+                return False
+        else:
+            return False
