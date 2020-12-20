@@ -13,6 +13,7 @@ class MovieSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'content', 'director', 'actor', 'genre', 'review', 'released_at']
 
     def get_review(self, instance):
+        # error: collections.OrderedDict' object has no attribute 'reviews', but successfully created with review: []
         review = instance.reviews.filter(movie=instance.id)
         serializer = ReviewSerializer(review, many=True)
         return serializer.data

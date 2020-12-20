@@ -69,3 +69,14 @@ class ActorViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # 중복검증 : pk 재설정 [name + a ?]
         Actor.objects.create(**serializer.validated_data)
+
+"""
+Movie
+- actor: ['a', 'b', 'c']  .. FK)serializers.SerializerMethodField or models.manytomanyField
+    Actor
+        - filmography: ['x', 'y', 'z'] .. FK)serializers.SerializerMethodField or models.manytomanyField
+- review: ['5', '2', '3'] .. FK)serializers.SerializerMethodField
+    Review: review (FK)
+    => what if review is None when created?
+    *** error: collections.OrderedDict' object has no attribute 'reviews' but successfully created with review: []
+"""
