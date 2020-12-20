@@ -20,7 +20,7 @@ class Movie(models.Model):
                               on_delete=models.CASCADE,
                               null=True)
     genre = models.CharField(max_length=100)
-    review = models.CharField(max_length=10, null=True) # foreign key review
+    # review = models.CharField(max_length=10, null=True) # foreign key review
     released_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
