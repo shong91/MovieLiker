@@ -10,8 +10,8 @@
 ## Features
 ### User
 - Join / Login
-- Email Authentication (Celery)
-- Auth Token / JWT
+- Email Authentication (via Celery)
+- Auth Token
 - admin page 
 
 ### Movie/Review
