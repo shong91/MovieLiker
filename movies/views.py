@@ -51,7 +51,10 @@ class MovieViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         # 중복검증 : pk 재설정 [title + director + released_at ?]
-        Movie.objects.create(**serializer.validated_data)
+        # error: collections.OrderedDict' object has no attribute 'reviews', but successfully created with review: []
+        actor_id = self.request.data['actor']
+        return serializer.save(actor=Actor.objects.get(id=actor_id))
+        # Movie.objects.create(**serializer.validated_data)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -70,9 +73,13 @@ class ReviewViewSet(viewsets.ModelViewSet):
         review.delete()
 
     def perform_create(self, serializer):
+        movie_id = self.request.data['movie']
         print("serializer: ", serializer)
         print("validated_data: ", serializer.validated_data)
-        Review.objects.create(**serializer.validated_data)
+        # author, movie is NOT validated_data... => need to save serializer data as below
+        # WHAT IS VALIDATED_DATA ? OBJECT IS NOT A VALIDATED_DATA ??
+        return serializer.save(author=self.request.user, movie=Movie.objects.get(id=movie_id))
+        # Review.objects.create(**serializer.validated_data)
 
 
 """
