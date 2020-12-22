@@ -32,10 +32,10 @@ class Movie(models.Model):
 class Review(models.Model):
     movie = models.ForeignKey(Movie,
                               related_name='reviews',
-                              on_delete=models.CASCADE)
+                              on_delete=models.CASCADE, null=True)
     author = models.ForeignKey(User,
                                related_name='reviews',
-                               on_delete=models.CASCADE)
+                               on_delete=models.CASCADE, null=True)
     review = models.CharField(max_length=10)
     comment = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)

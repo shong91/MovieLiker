@@ -3,7 +3,30 @@ from rest_framework import viewsets, permissions, status, renderers
 from rest_framework.response import Response
 from .models import Movie, Review, Actor
 from .serializer import MovieSerializer, ReviewSerializer, ActorSerializer
-from MovieLiker.permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
+from MovieLiker.permissions import IsAdminOrReadOnly, IsReviewOwnerOrReadOnly
+
+
+class ActorViewSet(viewsets.ModelViewSet):
+    queryset = Actor.objects.all()
+    serializer_class = ActorSerializer
+    permission_classes = (permissions.IsAdminUser, )
+
+    def list(self, request, *args, **kwargs):
+        queryset = Actor.objects.filter()
+        serializer = self.serializer_class(queryset, many=True)
+        return Response({'message': 'Successfully get actor List', 'data': serializer.data}, status=status.HTTP_200_OK, )
+
+    def perform_update(self, serializer):
+        actor = serializer.save(actor=self.request.data)
+        actor.save()
+
+    def perform_destroy(self, instance):
+        actor = Actor.objects.filter(id=instance.id)
+        actor.delete()
+
+    def perform_create(self, serializer):
+        # 중복검증 : pk 재설정 [name + a ?]
+        Actor.objects.create(**serializer.validated_data)
 
 
 class MovieViewSet(viewsets.ModelViewSet):
@@ -34,41 +57,23 @@ class MovieViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = (IsOwnerOrReadOnly, )
+    permission_classes = (IsReviewOwnerOrReadOnly, )
+    #  list 는 MovieViewSet 의 review = [{}] 에서 조회함.
 
     def perform_update(self, serializer):
-        actor = serializer.save(actor=self.request.data)
-        actor.save()
+        print(self.request.data)
+        review = serializer.save(reviews=self.request.data)
+        review.save()
 
     def perform_destroy(self, instance):
-        actor = Review.objects.filter(author=instance)
-        actor.delete()
+        review = Review.objects.filter(id=instance.id)
+        review.delete()
 
     def perform_create(self, serializer):
-        Actor.objects.create(**serializer.validated_data)
+        print("serializer: ", serializer)
+        print("validated_data: ", serializer.validated_data)
+        Review.objects.create(**serializer.validated_data)
 
-
-class ActorViewSet(viewsets.ModelViewSet):
-    queryset = Actor.objects.all()
-    serializer_class = ActorSerializer
-    permission_classes = (permissions.IsAdminUser, )
-
-    def list(self, request, *args, **kwargs):
-        queryset = Actor.objects.filter()
-        serializer = self.serializer_class(queryset, many=True)
-        return Response({'message': 'Successfully get actor List', 'data': serializer.data}, status=status.HTTP_200_OK, )
-
-    def perform_update(self, serializer):
-        actor = serializer.save(actor=self.request.data)
-        actor.save()
-
-    def perform_destroy(self, instance):
-        actor = Actor.objects.filter(id=instance.id)
-        actor.delete()
-
-    def perform_create(self, serializer):
-        # 중복검증 : pk 재설정 [name + a ?]
-        Actor.objects.create(**serializer.validated_data)
 
 """
 Movie
