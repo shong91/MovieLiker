@@ -1,7 +1,8 @@
 # MovieLiker
- [DRF project] Movie Liker
+ [DRF project] MovieLiker
+ : check movie list and leave your review/comments.
 
-## Services
+## Tech
 - python 
 - django REST framework 
 
@@ -9,11 +10,15 @@
 
 ## Features
 ### User
-- Join / Login
-- Email Authentication (via Celery)
-- Auth Token
-- admin page 
+- User
+   - Join/Login User 
+   - Email Authentication (Celery)
+   - Auth Token
+   - update profile, delete account (IsOwnerOrReadOnly)
+- Admin
+   - admin page 
 
 ### Movie/Review
-- Movie CRUD (C/U/D: Admin only)
-- Review CRUD
+- Movie CRUD (IsAdminOrReadOnly)
+- Actor CRUD (IsAdminOrReadOnly)
+- Review CRUD (IsReviewOwnerOrReadOnly)
