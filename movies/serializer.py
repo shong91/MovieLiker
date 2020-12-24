@@ -13,15 +13,13 @@ class MovieSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'content', 'director', 'actor', 'genre', 'review', 'released_at']
 
     def get_review(self, instance):
+        # error: collections.OrderedDict' object has no attribute 'reviews', but successfully created with review: []
         try:
             review = instance.reviews.filter(movie=instance.id)
             serializer = ReviewSerializer(review, many=True)
             return serializer.data
         except AttributeError:
             pass
-
-        # error: collections.OrderedDict' object has no attribute 'reviews', but successfully created with review: []
-
 
     # def create(self, validated_data):
     #     return Movie.objects.create(**validated_data)
@@ -39,7 +37,6 @@ class ReviewSerializer(serializers.HyperlinkedModelSerializer):
 
     # def create(self, validated_data):
     #     return Review.objects.create(**validated_data)
-
 
 
 class ActorSerializer(serializers.ModelSerializer):

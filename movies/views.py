@@ -76,8 +76,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         movie_id = self.request.data['movie']
         print("serializer: ", serializer)
         print("validated_data: ", serializer.validated_data)
-        # author, movie is NOT validated_data... => need to save serializer data as below
-        # WHAT IS VALIDATED_DATA ? OBJECT IS NOT A VALIDATED_DATA ??
+        # author, movie is NOT validated_data (FK -> object)... => need to save serializer data as below
         return serializer.save(author=self.request.user, movie=Movie.objects.get(id=movie_id))
         # Review.objects.create(**serializer.validated_data)
 
@@ -87,8 +86,4 @@ Movie
 - actor: ['a', 'b', 'c']  .. FK)serializers.SerializerMethodField or models.manytomanyField
     Actor
         - filmography: ['x', 'y', 'z'] .. FK)serializers.SerializerMethodField or models.manytomanyField
-- review: ['5', '2', '3'] .. FK)serializers.SerializerMethodField
-    Review: review (FK)
-    => what if review is None when created?
-    *** error: collections.OrderedDict' object has no attribute 'reviews' but successfully created with review: []
 """
