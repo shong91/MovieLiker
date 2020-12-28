@@ -20,7 +20,7 @@ def send_email():
 
 #
 # 참고: https://velog.io/@lemontech119/DRF%EB%A1%9C-api-%EC%84%9C%EB%B2%84-%EA%B0%9C%EB%B0%9C6-celery
-# 1. Redis server 가동
+# 1. Redis server 가동 (D:\redis-server.exe)
 #    redis-server /usr/local/etc/redis.conf
 # 2. Django 프로젝트 위치에서 터미널을 하나 더 켜서 celery worker를 작동시킴.
 #    celery -A {djangoproject} worker -l info
