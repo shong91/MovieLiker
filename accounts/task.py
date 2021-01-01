@@ -1,8 +1,8 @@
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 from django.core.mail.message import EmailMessage
-from MovieLiker import settings
-FROM_EMAIL = settings.EMAIL_HOST_USER
+from MovieLiker.settings import base
+FROM_EMAIL = base.EMAIL_HOST_USER
 
 
 # @shared_task : celery로 따로 작업할 코드라고 선언하는 부분입니다.

@@ -42,7 +42,7 @@ auth using the return value of the first class that successfully authenticates.
 if no class authenticates, 33 request.user will be set to django.contrib.auth.models.AnonymousUser, and request.auth will be set to None.
 """
 
-# 1) settings.py
+# 1) base.py
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication. BasicAuthentication',
@@ -75,7 +75,7 @@ def example_view(request, format None):
         'auth': unicode(request.auth), # None return Response(content)
     }
 
-# 3) settings.py use Token, TokenAuthentication class
+# 3) base.py use Token, TokenAuthentication class
 INSTALLED_APPS = [
     'rest_framework.authtoken'
     ]
